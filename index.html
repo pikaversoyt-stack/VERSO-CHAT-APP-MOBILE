@@ -386,7 +386,6 @@
             margin-bottom: 4px;
         }
 
-        /* BARRA DE ENTRADA OPTIMIZADA PARA VERTICAL Y HORIZONTAL */
         .chat-input-bar {
             background: var(--bg-header);
             padding: 8px 10px;
@@ -538,7 +537,6 @@
             margin-left: 4px;
         }
 
-        /* Selector de Efectos de Voz Adaptativo */
         #voice-fx-select {
             background: #2a3942;
             color: white;
@@ -659,7 +657,6 @@
                 </div>
             </div>
 
-            <!-- BARRA DE CHAT FUNCIONAL VERTICAL & HORIZONTAL -->
             <div class="chat-input-bar">
                 <i class="fas fa-paperclip icon-btn" onclick="document.getElementById('chat-img-input').click()"></i>
                 <input type="file" id="chat-img-input" style="display:none;" accept="image/*" onchange="enviarImagenChat(event)">
@@ -801,6 +798,35 @@
     let contadorMensajesPrevio = {};
 
     window.onload = () => {
+        // REGISTRO DE SERVICE WORKER PARA NOTIFICACIONES (INLINE BLOB)
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                self.addEventListener('install', (e) => self.skipWaiting());
+                self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+                self.addEventListener('push', (event) => {
+                    const data = event.data ? event.data.json() : {};
+                    const title = data.title || 'VERSO Chat';
+                    const options = {
+                        body: data.body || 'Tienes un nuevo mensaje',
+                        icon: data.icon || 'https://cdn-icons-png.flaticon.com/512/732/732200.png',
+                        vibrate: [100, 50, 100]
+                    };
+                    event.waitUntil(self.registration.showNotification(title, options));
+                });
+                self.addEventListener('notificationclick', (event) => {
+                    event.notification.close();
+                    event.waitUntil(
+                        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+                            if (clientList.length > 0) return clientList[0].focus();
+                            return clients.openWindow('/');
+                        })
+                    );
+                });
+            `;
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(e => console.log(e));
+        }
+
         let savedSession = localStorage.getItem('verso_chat_session');
         if (savedSession) {
             try {
@@ -1103,16 +1129,13 @@
         c.style.display = c.style.display === "flex" ? "none" : "flex";
     }
 
-    /* ELIMINACIÓN DE CHAT DESDE EL ICONO DE BASURA DE FORMA EFECTIVA */
     async function eliminarSalaChatCompleta(numId, event) {
         if (event) event.stopPropagation();
         if (!confirm(`¿Eliminar la conversación de tu lista?`)) return;
 
-        // Remover del listado local
         listadoIdsChatsAbiertos = listadoIdsChatsAbiertos.filter(id => id !== numId);
         guardarListaChatsEnCache();
 
-        // Borrar vinculación en Firebase para el usuario actual
         if (miPerfil.numero && numId) {
             await fetch(`${FIREBASE_BASE_URL}/contactos_vinculados/${miPerfil.numero}/${numId}.json`, { method: 'DELETE' });
         }
