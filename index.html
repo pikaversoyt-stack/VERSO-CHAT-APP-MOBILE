@@ -36,16 +36,14 @@
             position: fixed;
         }
 
-        /* Contenedor Principal */
         #app-container {
             display: flex;
             width: 100vw;
             height: 100vh;
-            height: 100dvh; /* Soporte dinamico iOS/Android */
+            height: 100dvh;
             position: relative;
         }
 
-        /* Pantallas de Autenticación / Login */
         .auth-screen {
             position: absolute;
             top: 0;
@@ -85,7 +83,7 @@
             background: #111b21;
             color: white;
             outline: none;
-            font-size: 16px; /* Evita zoom molesto en iOS */
+            font-size: 16px;
         }
 
         .auth-card button {
@@ -100,7 +98,6 @@
             cursor: pointer;
         }
 
-        /* Layout Responsive (Móvil & Tablet & PC) */
         #sidebar {
             width: 360px;
             background: #111b21;
@@ -164,7 +161,6 @@
             object-fit: cover;
         }
 
-        /* Tray de Historias y Estados */
         #friends-status-space {
             display: flex;
             gap: 12px;
@@ -192,7 +188,6 @@
             object-fit: cover;
         }
 
-        /* Lista de Contactos */
         #contacts-space {
             flex: 1;
             overflow-y: auto;
@@ -240,17 +235,18 @@
         }
 
         .delete-chat-btn {
-            margin-left: 8px;
+            margin-left: 10px;
+            padding: 8px;
             color: var(--text-muted);
-            font-size: 0.9em;
+            font-size: 1.1em;
             cursor: pointer;
+            z-index: 5;
         }
 
-        .delete-chat-btn:hover {
+        .delete-chat-btn:active, .delete-chat-btn:hover {
             color: #ff4757;
         }
 
-        /* Efectos Visuales de Nombres */
         .gold-name {
             color: #ffd700 !important;
             text-shadow: 0 0 5px rgba(255,215,0,0.5);
@@ -264,15 +260,8 @@
             font-weight: bold;
         }
 
-        .iva-name {
-            color: #ff4757 !important;
-            font-weight: bold;
-        }
-
-        .ale-name {
-            color: #2ed573 !important;
-            font-weight: bold;
-        }
+        .iva-name { color: #ff4757 !important; font-weight: bold; }
+        .ale-name { color: #2ed573 !important; font-weight: bold; }
 
         #welcome-view {
             display: flex;
@@ -289,7 +278,6 @@
             height: 100%;
         }
 
-        /* Cabecera del Chat */
         .chat-header {
             background: var(--bg-header);
             padding: 10px 16px;
@@ -321,15 +309,12 @@
         }
 
         @media (max-width: 768px) {
-            .back-mobile-btn {
-                display: block;
-            }
+            .back-mobile-btn { display: block; }
         }
 
-        /* Cuerpo de Mensajes */
         #messages-space {
             flex: 1;
-            padding: 20px;
+            padding: 15px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -339,7 +324,7 @@
         }
 
         .message {
-            max-width: 75%;
+            max-width: 80%;
             padding: 8px 12px;
             border-radius: 8px;
             position: relative;
@@ -348,36 +333,10 @@
             word-break: break-word;
         }
 
-        .msg-in {
-            background: var(--bg-msg-in);
-            align-self: flex-start;
-            border-top-left-radius: 0;
-        }
-
-        .msg-out {
-            background: var(--bg-msg-out);
-            align-self: flex-end;
-            border-top-right-radius: 0;
-        }
-
-        .msg-juro {
-            background: #3d2382;
-            color: #fff;
-            border: 1px solid #7f00ff;
-            align-self: center;
-            text-align: center;
-            width: 85%;
-            border-radius: 8px;
-        }
-
-        .msg-system {
-            align-self: center;
-            background: rgba(0,0,0,0.5);
-            font-size: 0.8em;
-            padding: 4px 12px;
-            border-radius: 12px;
-            color: var(--text-muted);
-        }
+        .msg-in { background: var(--bg-msg-in); align-self: flex-start; border-top-left-radius: 0; }
+        .msg-out { background: var(--bg-msg-out); align-self: flex-end; border-top-right-radius: 0; }
+        .msg-juro { background: #3d2382; color: #fff; border: 1px solid #7f00ff; align-self: center; text-align: center; width: 85%; border-radius: 8px; }
+        .msg-system { align-self: center; background: rgba(0,0,0,0.5); font-size: 0.8em; padding: 4px 12px; border-radius: 12px; color: var(--text-muted); }
 
         .msg-meta {
             font-size: 0.7em;
@@ -390,11 +349,8 @@
             gap: 4px;
         }
 
-        .msg-meta .seen {
-            color: #53bdeb;
-        }
+        .msg-meta .seen { color: #53bdeb; }
 
-        /* Acciones Flotantes de Mensaje */
         .message-actions {
             position: absolute;
             top: 4px;
@@ -406,40 +362,19 @@
             border-radius: 4px;
         }
 
-        .message:hover .message-actions {
-            display: flex;
-        }
+        .message:hover .message-actions { display: flex; }
+        .action-sub-btn { cursor: pointer; color: #ccc; font-size: 0.8em; }
+        .action-sub-btn:hover { color: #fff; }
+        .is-starred { color: #ffd700 !important; }
+        .spy-active { color: #ff3333 !important; }
 
-        .action-sub-btn {
-            cursor: pointer;
-            color: #ccc;
-            font-size: 0.8em;
-        }
-
-        .action-sub-btn:hover {
-            color: #fff;
-        }
-
-        .is-starred {
-            color: #ffd700 !important;
-        }
-
-        .spy-active {
-            color: #ff3333 !important;
-        }
-
-        /* Elementos Multimedia */
         .chat-inline-img, .sticker-img {
-            max-width: 250px;
+            max-width: 100%;
             max-height: 250px;
             border-radius: 8px;
             cursor: pointer;
             display: block;
             margin-top: 4px;
-        }
-
-        .sticker-img {
-            background: transparent;
         }
 
         .reply-quote-box {
@@ -451,38 +386,41 @@
             margin-bottom: 4px;
         }
 
-        /* Barra de Entrada de Texto */
+        /* BARRA DE ENTRADA OPTIMIZADA PARA VERTICAL Y HORIZONTAL */
         .chat-input-bar {
             background: var(--bg-header);
-            padding: 8px 12px;
+            padding: 8px 10px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             position: relative;
             padding-bottom: max(8px, env(safe-area-inset-bottom));
+            flex-wrap: nowrap;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        .chat-input-bar input {
+        .chat-input-bar input[type="text"] {
             flex: 1;
-            padding: 10px 14px;
+            min-width: 0;
+            padding: 10px 12px;
             border-radius: 20px;
             border: none;
             background: #2a3942;
             color: white;
             outline: none;
-            font-size: 16px; /* Evita auto-zoom al presionar teclado en iOS/Android */
+            font-size: 16px;
         }
 
         .icon-btn {
-            font-size: 1.2em;
+            font-size: 1.1em;
             color: var(--text-muted);
             cursor: pointer;
-            padding: 6px;
+            padding: 4px;
+            flex-shrink: 0;
         }
 
-        .icon-btn:hover {
-            color: var(--text-main);
-        }
+        .icon-btn:hover, .icon-btn:active { color: var(--text-main); }
 
         .recording-active {
             color: #ff4757 !important;
@@ -506,11 +444,10 @@
             100% { opacity: 1; }
         }
 
-        /* Paneles Emergentes e Inyecciones */
         .popover-box {
             position: absolute;
             bottom: 60px;
-            left: 16px;
+            left: 10px;
             background: #202c33;
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -518,23 +455,18 @@
             display: none;
             gap: 8px;
             z-index: 100;
-            max-width: 300px;
+            max-width: 90vw;
             flex-wrap: wrap;
         }
 
         .sticker-option {
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             cursor: pointer;
             object-fit: contain;
             border-radius: 4px;
         }
 
-        .sticker-option:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        /* Drawer lateral de configuraciones */
         .drawer-panel {
             position: absolute;
             top: 0;
@@ -553,9 +485,7 @@
             overflow-y: auto;
         }
 
-        .drawer-panel.open {
-            right: 0;
-        }
+        .drawer-panel.open { right: 0; }
 
         .modal-overlay {
             position: fixed;
@@ -571,7 +501,6 @@
             flex-direction: column;
         }
 
-        /* Tarjeta de Encuesta */
         .survey-card {
             background: rgba(0,0,0,0.2);
             padding: 10px;
@@ -608,12 +537,24 @@
             color: var(--text-muted);
             margin-left: 4px;
         }
+
+        /* Selector de Efectos de Voz Adaptativo */
+        #voice-fx-select {
+            background: #2a3942;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 6px 4px;
+            font-size: 0.75em;
+            outline: none;
+            flex-shrink: 0;
+            max-width: 75px;
+        }
     </style>
 </head>
 <body>
 
 <div id="app-container">
-    <!-- PANTALLA DE LOGIN -->
     <div id="login-screen" class="auth-screen">
         <div class="auth-card">
             <h2><i class="fas fa-terminal"></i> VERSO Chat</h2>
@@ -626,7 +567,6 @@
         </div>
     </div>
 
-    <!-- PANTALLA DE REGISTRO -->
     <div id="reg-screen" class="auth-screen" style="display:none;">
         <div class="auth-card">
             <h2>Crear Terminal</h2>
@@ -640,7 +580,6 @@
         </div>
     </div>
 
-    <!-- PANEL LATERAL -->
     <div id="sidebar">
         <div class="sidebar-header">
             <div class="user-avatar-btn" onclick="toggleSettingsPanel()">
@@ -654,28 +593,22 @@
             </div>
         </div>
 
-        <!-- TRAY DE HISTORIAS Y ESTADOS -->
         <div id="friends-status-space"></div>
 
-        <!-- BUSCADOR Y AGREGAR CONTACTO -->
         <div style="padding:8px 12px; background:#111b21;">
             <input type="text" id="search-phone-input" placeholder="Buscar o agregar terminal..." onkeyup="if(event.key==='Enter') buscarYAgregarContacto()" style="width:100%; padding:8px 12px; border-radius:8px; border:none; background:#202c33; color:white; outline:none; font-size:16px;">
         </div>
 
-        <!-- LISTA DE CONTACTOS -->
         <div id="contacts-space"></div>
     </div>
 
-    <!-- ÁREA DE CHAT -->
     <div id="chat-area">
-        <!-- VISTA DE BIENVENIDA -->
         <div id="welcome-view">
             <i class="fas fa-comments" style="font-size: 4em; margin-bottom: 15px;"></i>
             <h3>VERSO Chat Console</h3>
             <p style="font-size: 0.9em; margin-top:5px;">Selecciona una sala o canal para iniciar la transmisión.</p>
         </div>
 
-        <!-- VISTA DE CHAT ACTIVO -->
         <div id="active-chat-view">
             <div class="chat-header">
                 <div class="chat-header-info">
@@ -694,7 +627,6 @@
                 </div>
             </div>
 
-            <!-- ANUNCIOS Y RESPUESTAS CITADAS -->
             <div id="chat-pinned-zone">
                 <span>📌 <b id="pinned-msg-text">Anuncio fijado...</b></span>
                 <i class="fas fa-times icon-btn" onclick="desfijarMensajeLocal()"></i>
@@ -707,15 +639,12 @@
 
             <input type="text" id="inner-search-chat" placeholder="Filtrar mensajes en esta sala..." onkeyup="forzarRenderMensajes()" style="display:none; padding:8px 16px; background:#182229; border:none; border-bottom:1px solid var(--border-color); color:white; outline:none; font-size:16px;">
 
-            <!-- MENSAJES -->
             <div id="messages-space"></div>
 
-            <!-- PANEL DE STICKERS -->
             <div id="sticker-box" class="popover-box">
                 <div id="sticker-injection-space" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
             </div>
 
-            <!-- PANEL DE COMANDOS CLI EN PANTALLA -->
             <div id="commands-box" class="popover-box">
                 <div style="font-size:0.8em; color:var(--accent); font-weight:bold; width:100%;">Comandos CLI Disponibles:</div>
                 <div style="font-size:0.75em; color:var(--text-muted);">
@@ -730,21 +659,20 @@
                 </div>
             </div>
 
-            <!-- BARRA DE INPUT DE MENSAJE -->
+            <!-- BARRA DE CHAT FUNCIONAL VERTICAL & HORIZONTAL -->
             <div class="chat-input-bar">
                 <i class="fas fa-paperclip icon-btn" onclick="document.getElementById('chat-img-input').click()"></i>
                 <input type="file" id="chat-img-input" style="display:none;" accept="image/*" onchange="enviarImagenChat(event)">
 
                 <i class="fas fa-sticky-note icon-btn" onclick="toggleStickersPanel()"></i>
-                <i class="fas fa-terminal icon-btn" onclick="toggleCommandsPanel()"></i>
 
-                <select id="voice-fx-select" style="background:#2a3942; color:white; border:none; border-radius:4px; padding:4px; font-size:0.8em; outline:none;">
+                <select id="voice-fx-select">
                     <option value="normal">🎙️ Normal</option>
                     <option value="robot">🤖 Robot</option>
                     <option value="squirrel">🐿️ Ardilla</option>
                 </select>
 
-                <input type="text" id="chat-message-input" placeholder="Escribe un mensaje o comando CLI (/)..." onkeyup="evaluarEnter(event)" oninput="emitirEstadoEscribiendo()">
+                <input type="text" id="chat-message-input" placeholder="Mensaje..." onkeyup="evaluarEnter(event)" oninput="emitirEstadoEscribiendo()">
 
                 <i id="mic-record-btn" class="fas fa-microphone icon-btn" onclick="controlarGrabadoraVoz()"></i>
                 <i class="fas fa-paper-plane icon-btn" style="color:var(--accent);" onclick="enviarMensajeTexto()"></i>
@@ -752,7 +680,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE AGREGAR CONTACTO MANUALLY -->
     <div id="add-contact-modal" class="modal-overlay">
         <div class="auth-card">
             <h3>Añadir Terminal</h3>
@@ -762,7 +689,6 @@
         </div>
     </div>
 
-    <!-- PANEL DE AJUSTES LATERAL -->
     <div id="my-settings-panel" class="drawer-panel">
         <h3><i class="fas fa-sliders-h"></i> Mi Terminal</h3>
         <hr style="border-color:var(--border-color);">
@@ -815,12 +741,10 @@
     </div>
 </div>
 
-<!-- MODAL CINE PARA FOTOS -->
 <div id="cinema-panel" class="modal-overlay" onclick="this.style.display='none'">
     <img id="cinema-target-img" src="" style="max-width:90vw; max-height:90vh; border-radius:8px; box-shadow:0 0 20px rgba(0,0,0,0.8);">
 </div>
 
-<!-- MODAL VISUALIZADOR DE ESTADOS / HISTORIAS -->
 <div id="status-modal" class="modal-overlay">
     <div style="position:relative; width:100%; max-width:400px; height:80vh; background:#000; border-radius:12px; display:flex; flex-direction:column; overflow:hidden;">
         <div style="width:100%; background:rgba(255,255,255,0.2); height:4px;">
@@ -836,7 +760,6 @@
     </div>
 </div>
 
-<!-- CAPA DE TRANSMISIÓN GLOBAL BROADCAST -->
 <div id="broadcast-layer" class="modal-overlay">
     <div style="background:#202c33; padding:20px; border-radius:12px; max-width:400px; text-align:center;">
         <p id="broadcast-layer-text" style="white-space:pre-wrap; font-weight:bold; color:#ffd700;"></p>
@@ -844,10 +767,8 @@
     </div>
 </div>
 
-<!-- REPRODUCTOR MÚSICA SINCRONIZADA -->
 <audio id="global-sync-player" style="display:none;"></audio>
 
-<!-- LÓGICA PRINCIPAL JAVASCRIPT COMPLETA -->
 <script>
     const FIREBASE_BASE_URL = "https://nene-banko-default-rtdb.firebaseio.com";
     const BLANK_PIXEL = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
@@ -935,10 +856,7 @@
         let inputQuery = document.getElementById("login-phone").value.trim();
         let pass = document.getElementById("login-pass").value.trim();
 
-        if (!inputQuery || !pass) {
-            alert("Completa los campos.");
-            return;
-        }
+        if (!inputQuery || !pass) return alert("Completa los campos.");
 
         let phoneClean = limpiarNumero(inputQuery);
 
@@ -984,10 +902,7 @@
         let phoneInput = document.getElementById("reg-phone").value.trim();
         let pass = document.getElementById("reg-pass").value.trim();
 
-        if (!name || !pass) {
-            alert("Completa tu Nombre y Código de Acceso.");
-            return;
-        }
+        if (!name || !pass) return alert("Completa tu Nombre y Código de Acceso.");
 
         let phone = phoneInput ? limpiarNumero(phoneInput) : limpiarNumero(name);
 
@@ -1007,7 +922,6 @@
         });
 
         alert(`✅ Registrado correctamente.\nTu ID es: ${phone}`);
-
         miPerfil = nuevoPerfil;
         localStorage.setItem('verso_chat_session', JSON.stringify(miPerfil));
         ejecutarEntradaApp();
@@ -1102,7 +1016,6 @@
             });
 
             localStorage.setItem('verso_chat_session', JSON.stringify(miPerfil));
-
             document.getElementById("my-avatar").src = miPerfil.avatar;
             let elMyName = document.getElementById("my-name");
             if (elMyName) {
@@ -1130,9 +1043,7 @@
         let file = event.target.files[0];
         if (!file) return;
         let reader = new FileReader();
-        reader.onload = () => {
-            aplicarFondoEstilo(reader.result);
-        };
+        reader.onload = () => { aplicarFondoEstilo(reader.result); };
         reader.readAsDataURL(file);
     }
 
@@ -1192,12 +1103,19 @@
         c.style.display = c.style.display === "flex" ? "none" : "flex";
     }
 
+    /* ELIMINACIÓN DE CHAT DESDE EL ICONO DE BASURA DE FORMA EFECTIVA */
     async function eliminarSalaChatCompleta(numId, event) {
         if (event) event.stopPropagation();
-        if (!confirm(`¿Ocultar canal de la interfaz?`)) return;
+        if (!confirm(`¿Eliminar la conversación de tu lista?`)) return;
 
+        // Remover del listado local
         listadoIdsChatsAbiertos = listadoIdsChatsAbiertos.filter(id => id !== numId);
         guardarListaChatsEnCache();
+
+        // Borrar vinculación en Firebase para el usuario actual
+        if (miPerfil.numero && numId) {
+            await fetch(`${FIREBASE_BASE_URL}/contactos_vinculados/${miPerfil.numero}/${numId}.json`, { method: 'DELETE' });
+        }
 
         if (numeroChatActivo === numId) {
             cerrarChatMobile();
@@ -1332,7 +1250,7 @@
                 grabadorMedios.start();
                 if (micIcon) micIcon.classList.add("recording-active");
             } catch (err) {
-                alert("Micrófono no disponible.");
+                alert("Micrófono no disponible. Otorga los permisos en el navegador.");
             }
         } else {
             grabadorMedios.stop();
@@ -1449,7 +1367,6 @@
         document.getElementById("welcome-view").style.display = "none";
         document.getElementById("active-chat-view").style.display = "flex";
 
-        // Modo Vista Móvil Activo
         document.getElementById("chat-area").classList.add("mobile-active");
 
         let eg = document.getElementById("edit-group-icon");
@@ -1537,7 +1454,7 @@
             if (m.tipo === "imagen") cuerpo = `<img src="${m.contenido}" class="chat-inline-img" onclick="dispararModoCineEnfoque('${m.contenido}')">`;
             if (m.tipo === "audio") {
                 let audId = "audio-track-" + m.idFirebase;
-                cuerpo = `<audio id="${audId}" src="${m.contenido}" controls preload="auto" style="max-width:220px; height:40px; display:block; margin-top:4px;"></audio><button class="speed-badge-btn" onclick="alternarVelocidadAudio(this, '${audId}')">1x</button>`;
+                cuerpo = `<audio id="${audId}" src="${m.contenido}" controls preload="auto" style="max-width:200px; height:40px; display:block; margin-top:4px;"></audio><button class="speed-badge-btn" onclick="alternarVelocidadAudio(this, '${audId}')">1x</button>`;
             }
             if (m.tipo === "encuesta") {
                 let dataEnc = m.metaEncuesta;
@@ -1845,7 +1762,7 @@
                         <div class="contact-last-msg">${ultimoTexto}</div>
                     </div>
                     ${unreadDOM}
-                    <i class="fas fa-eye-slash delete-chat-btn" onclick="eliminarSalaChatCompleta('${num}', event)" title="Ocultar"></i>
+                    <i class="fas fa-trash delete-chat-btn" onclick="eliminarSalaChatCompleta('${num}', event)" title="Eliminar Chat"></i>
                 </div>
             `;
         }
@@ -1909,7 +1826,7 @@
         let textoComando = `/unirse ${numeroChatActivo}`;
         if (navigator.clipboard && window.isSecureContext) {
             navigator.clipboard.writeText(textoComando).then(() => {
-                alert("Comando de enlace copiado al portapapeles.");
+                alert("Comando de enlace copiado.");
             }).catch(() => {
                 prompt("Copia el código manualmente:", textoComando);
             });
@@ -1925,35 +1842,6 @@
         if (canalSilenciadoMuteAll && tipo === "texto" && !contenido.startsWith("/muteall")) {
             alert("⚠️ El canal se encuentra silenciado.");
             return;
-        }
-
-        if (tipo === "texto" && contenido.trim() === "/erase") {
-            if (confirm("¿Borrar historial?")) {
-                await fetch(`${FIREBASE_BASE_URL}/chats/${salaId}.json`, { method: 'DELETE' });
-                listadoIdsChatsAbiertos = listadoIdsChatsAbiertos.filter(id => id !== numeroChatActivo);
-                guardarListaChatsEnCache();
-                delete contactosAgregados[numeroChatActivo];
-                cerrarChatMobile();
-                return;
-            } else {
-                return;
-            }
-        }
-
-        if (tipo === "texto" && contenido.trim().toLowerCase() === "/eraseall") {
-            if (confirm("🚨 PROTOCOLO DE PÁNICO TOTAL 🚨")) {
-                for (let idKey of listadoIdsChatsAbiertos) {
-                    let sId = idKey.endsWith("_notes") ? idKey : (idKey.startsWith("GRUPO") ? idKey : [miPerfil.numero, idKey].sort().join('_'));
-                    await fetch(`${FIREBASE_BASE_URL}/chats/${sId}.json`, { method: 'DELETE' });
-                }
-                listadoIdsChatsAbiertos = [miPerfil.numero];
-                guardarListaChatsEnCache();
-                contactosAgregados = {};
-                cerrarChatMobile();
-                return;
-            } else {
-                return;
-            }
         }
 
         let metaEncData = null;
@@ -1980,7 +1868,7 @@
             let packB = { texto: msgB, emisor: miPerfil.nombre, idUnico: "B" + new Date().getTime() };
             await fetch(`${FIREBASE_BASE_URL}/comandos_globales/broadcast_msg.json`, { method: 'PUT', body: JSON.stringify(packB) });
             tipo = "sistema";
-            contenido = "📢 Transmisión global de alerta enviada.";
+            contenido = "📢 Transmisión global enviada.";
         }
 
         if (tipo === "texto" && contenido.startsWith("/sticker ")) {
@@ -1997,43 +1885,10 @@
             contenido = `🔑 [VERSO ENCRYPTED KEY]:\n\n${btoa(unescape(encodeURIComponent(txtRaw)))}`;
         }
 
-        if (tipo === "texto" && contenido.startsWith("/kick ")) {
-            let expulsado = contenido.replace("/kick ", "").trim();
-            tipo = "sistema";
-            contenido = `🚪 El terminal '${expulsado}' ha sido expulsado.`;
-        }
-
         if (tipo === "texto" && contenido.trim() === "/muteall") {
             canalSilenciadoMuteAll = !canalSilenciadoMuteAll;
             tipo = "sistema";
             contenido = canalSilenciadoMuteAll ? "🤫 Canal silenciado por la administración." : "🗣️ Canal restaurado.";
-        }
-
-        if (tipo === "texto" && contenido.trim() === "/backup") {
-            let chatDataRaw = contactosAgregados[numeroChatActivo]?.mensajes || [];
-            let blobJson = new Blob([JSON.stringify(chatDataRaw, null, 2)], { type: "application/json" });
-            let dummyLink = document.createElement("a");
-            dummyLink.href = URL.createObjectURL(blobJson);
-            dummyLink.download = `backup_verso_${numeroChatActivo}.json`;
-            dummyLink.click();
-            tipo = "sistema";
-            contenido = `📦 Backup generado correctamente.`;
-        }
-
-        if (tipo === "texto" && contenido.startsWith("/") && tipo !== "sistema" && tipo !== "encuesta" && tipo !== "juro") {
-            let parts = contenido.split(" ");
-            let comando = parts[0].toLowerCase();
-            let argument = parts.slice(1).join(" ");
-
-            if (comando === "/musica" && argument) {
-                await fetch(`${FIREBASE_BASE_URL}/comandos_globales/musica_sinc.json`, { method: 'PUT', body: JSON.stringify({ url: argument.trim() }) });
-                contenido = `🎵 Transmisión musical inicializada.`;
-            } else if (comando === "/fijar" && argument) {
-                await fetch(`${FIREBASE_BASE_URL}/anuncios_fijados/${salaId}.json`, { method: 'PUT', body: JSON.stringify(argument.trim()) });
-                contenido = `📌 Fijó un anuncio importante en la cabecera.`;
-            } else {
-                contenido = "🤖 Bot: Comando ejecutado.";
-            }
         }
 
         let tiempoId = new Date().getTime();
