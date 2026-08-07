@@ -6,6 +6,11 @@
     <title>VERSO Chat App Complete</title>
     <!-- FontAwesome Font Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDKs Compat -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-messaging-compat.js"></script>
+
     <style>
         :root {
             --bg-dark: #0b141a;
@@ -548,9 +553,23 @@
             flex-shrink: 0;
             max-width: 75px;
         }
+
+        .notif-alert-banner {
+            background: #00a884;
+            color: #fff;
+            padding: 8px 12px;
+            text-align: center;
+            font-size: 0.85em;
+            cursor: pointer;
+            display: none;
+        }
     </style>
 </head>
 <body>
+
+<div id="notif-banner" class="notif-alert-banner" onclick="solicitarPermisoNotificacionesManual()">
+    🔔 Toca aquí para Activar Notificaciones en tu Celular
+</div>
 
 <div id="app-container">
     <div id="login-screen" class="auth-screen">
@@ -770,6 +789,23 @@
     const FIREBASE_BASE_URL = "https://nene-banko-default-rtdb.firebaseio.com";
     const BLANK_PIXEL = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
+    // Configuración de tu proyecto nene-banko
+    const firebaseConfig = {
+        apiKey: "AIzaSyDummyKey",
+        authDomain: "nene-banko-default-rtdb.firebaseapp.com",
+        databaseURL: FIREBASE_BASE_URL,
+        projectId: "nene-banko-default-rtdb",
+        storageBucket: "nene-banko-default-rtdb.appspot.com",
+        messagingSenderId: "100000000000",
+        appId: "1:100000000000:web:dummy"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    let messaging = null;
+    if (firebase.messaging.isSupported()) {
+        messaging = firebase.messaging();
+    }
+
     let miPerfil = {
         numero: "",
         nombre: "",
@@ -778,7 +814,8 @@
         rango: "estándar",
         codigoAcceso: "",
         ultimaConexion: "en línea",
-        plataforma: "PC"
+        plataforma: "PC",
+        fcmToken: ""
     };
 
     let numeroChatActivo = "";
@@ -798,34 +835,7 @@
     let contadorMensajesPrevio = {};
 
     window.onload = () => {
-        // REGISTRO DE SERVICE WORKER PARA NOTIFICACIONES (INLINE BLOB)
-        if ('serviceWorker' in navigator) {
-            const swCode = `
-                self.addEventListener('install', (e) => self.skipWaiting());
-                self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
-                self.addEventListener('push', (event) => {
-                    const data = event.data ? event.data.json() : {};
-                    const title = data.title || 'VERSO Chat';
-                    const options = {
-                        body: data.body || 'Tienes un nuevo mensaje',
-                        icon: data.icon || 'https://cdn-icons-png.flaticon.com/512/732/732200.png',
-                        vibrate: [100, 50, 100]
-                    };
-                    event.waitUntil(self.registration.showNotification(title, options));
-                });
-                self.addEventListener('notificationclick', (event) => {
-                    event.notification.close();
-                    event.waitUntil(
-                        clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-                            if (clientList.length > 0) return clientList[0].focus();
-                            return clients.openWindow('/');
-                        })
-                    );
-                });
-            `;
-            const blob = new Blob([swCode], { type: 'application/javascript' });
-            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(e => console.log(e));
-        }
+        inicializarServiceWorkerYNotificaciones();
 
         let savedSession = localStorage.getItem('verso_chat_session');
         if (savedSession) {
@@ -849,18 +859,66 @@
         }
     };
 
-    function solicitarPermisoNotificaciones() {
-        if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-            Notification.requestPermission();
+    function inicializarServiceWorkerYNotificaciones() {
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/firebase-messaging-sw.js')
+                .then((reg) => {
+                    console.log('⚡ Service Worker de Notificaciones Registrado:', reg);
+                    if (messaging) {
+                        messaging.useServiceWorker(reg);
+                    }
+                })
+                .catch((err) => {
+                    console.error('Error al registrar Service Worker:', err);
+                });
         }
+
+        if ("Notification" in window) {
+            if (Notification.permission !== "granted") {
+                document.getElementById("notif-banner").style.display = "block";
+            }
+        }
+    }
+
+    function solicitarPermisoNotificacionesManual() {
+        if ("Notification" in window) {
+            Notification.requestPermission().then((permission) => {
+                if (permission === "granted") {
+                    document.getElementById("notif-banner").style.display = "none";
+                    obtenerYGuardarFCMToken();
+                }
+            });
+        }
+    }
+
+    function obtenerYGuardarFCMToken() {
+        if (!messaging) return;
+        messaging.getToken().then((token) => {
+            if (token) {
+                miPerfil.fcmToken = token;
+                if (miPerfil.numero) {
+                    fetch(`${FIREBASE_BASE_URL}/usuarios/${miPerfil.numero}/fcmToken.json`, {
+                        method: 'PUT',
+                        body: JSON.stringify(token)
+                    });
+                }
+            }
+        }).catch((err) => {
+            console.log('Error obteniendo FCM Token:', err);
+        });
     }
 
     function dispararNotificacionSistema(titulo, cuerpo, icono) {
         if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
-            new Notification(titulo, {
-                body: cuerpo,
-                icon: icono || BLANK_PIXEL
-            });
+            try {
+                new Notification(titulo, {
+                    body: cuerpo,
+                    icon: icono || BLANK_PIXEL,
+                    badge: icono || BLANK_PIXEL
+                });
+            } catch(e) {
+                console.log(e);
+            }
         }
     }
 
@@ -957,7 +1015,7 @@
         document.getElementById("login-screen").style.display = "none";
         document.getElementById("reg-screen").style.display = "none";
 
-        solicitarPermisoNotificaciones();
+        obtenerYGuardarFCMToken();
 
         let userAvatar = miPerfil.avatar || BLANK_PIXEL;
         document.getElementById("my-avatar").src = userAvatar;
