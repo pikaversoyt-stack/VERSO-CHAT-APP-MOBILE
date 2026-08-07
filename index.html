@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VERSO Chat App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>VERSO Chat App Complete</title>
     <!-- FontAwesome Font Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -24,6 +24,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body, html {
@@ -32,6 +33,7 @@
             background: var(--bg-dark);
             color: var(--text-main);
             overflow: hidden;
+            position: fixed;
         }
 
         /* Contenedor Principal */
@@ -39,6 +41,7 @@
             display: flex;
             width: 100vw;
             height: 100vh;
+            height: 100dvh; /* Soporte dinamico iOS/Android */
             position: relative;
         }
 
@@ -82,6 +85,7 @@
             background: #111b21;
             color: white;
             outline: none;
+            font-size: 16px; /* Evita zoom molesto en iOS */
         }
 
         .auth-card button {
@@ -96,14 +100,45 @@
             cursor: pointer;
         }
 
-        /* Barra Lateral (Sidebar) */
+        /* Layout Responsive (Móvil & Tablet & PC) */
         #sidebar {
-            width: 350px;
+            width: 360px;
             background: #111b21;
             border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
             height: 100%;
+            z-index: 10;
+            transition: transform 0.25s ease;
+        }
+
+        #chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: var(--bg-chat);
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar {
+                width: 100%;
+                position: absolute;
+                left: 0;
+                top: 0;
+            }
+            #chat-area {
+                width: 100%;
+                position: absolute;
+                left: 0;
+                top: 0;
+                display: none;
+                z-index: 20;
+            }
+            #chat-area.mobile-active {
+                display: flex !important;
+            }
         }
 
         .sidebar-header {
@@ -239,16 +274,6 @@
             font-weight: bold;
         }
 
-        /* Área de Chat Activo */
-        #chat-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            background: var(--bg-chat);
-            position: relative;
-        }
-
         #welcome-view {
             display: flex;
             flex-direction: column;
@@ -277,7 +302,7 @@
         .chat-header-info {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .chat-header-info img {
@@ -285,6 +310,20 @@
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
+        }
+
+        .back-mobile-btn {
+            display: none;
+            font-size: 1.2em;
+            color: var(--text-main);
+            padding: 4px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .back-mobile-btn {
+                display: block;
+            }
         }
 
         /* Cuerpo de Mensajes */
@@ -300,7 +339,7 @@
         }
 
         .message {
-            max-width: 65%;
+            max-width: 75%;
             padding: 8px 12px;
             border-radius: 8px;
             position: relative;
@@ -327,7 +366,7 @@
             border: 1px solid #7f00ff;
             align-self: center;
             text-align: center;
-            width: 80%;
+            width: 85%;
             border-radius: 8px;
         }
 
@@ -415,21 +454,23 @@
         /* Barra de Entrada de Texto */
         .chat-input-bar {
             background: var(--bg-header);
-            padding: 10px 16px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             position: relative;
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
         }
 
         .chat-input-bar input {
             flex: 1;
             padding: 10px 14px;
-            border-radius: 8px;
+            border-radius: 20px;
             border: none;
             background: #2a3942;
             color: white;
             outline: none;
+            font-size: 16px; /* Evita auto-zoom al presionar teclado en iOS/Android */
         }
 
         .icon-btn {
@@ -499,6 +540,7 @@
             top: 0;
             right: -400px;
             width: 380px;
+            max-width: 100%;
             height: 100%;
             background: #111b21;
             z-index: 500;
@@ -551,7 +593,6 @@
             cursor: pointer;
         }
 
-        /* Cabecera Fijada y Citas */
         #chat-pinned-zone, #reply-track-bar {
             background: #182229;
             padding: 8px 16px;
@@ -590,7 +631,7 @@
         <div class="auth-card">
             <h2>Crear Terminal</h2>
             <input type="text" id="reg-name" placeholder="Tu Nombre o Moniker">
-            <input type="text" id="reg-phone" placeholder="Crea tu ID o Número (Ej: 102030 o tu_nombre)">
+            <input type="text" id="reg-phone" placeholder="Crea tu ID o Número (Ej: 102030)">
             <input type="password" id="reg-pass" placeholder="Crear Código de Acceso">
             <button onclick="ejecutarRegistroFirebase()">Registrar Terminal</button>
             <p style="margin-top:15px; font-size:0.85em; color:var(--text-muted)">
@@ -618,7 +659,7 @@
 
         <!-- BUSCADOR Y AGREGAR CONTACTO -->
         <div style="padding:8px 12px; background:#111b21;">
-            <input type="text" id="search-phone-input" placeholder="Buscar o agregar terminal..." onkeyup="if(event.key==='Enter') buscarYAgregarContacto()" style="width:100%; padding:8px 12px; border-radius:8px; border:none; background:#202c33; color:white; outline:none; font-size:0.9em;">
+            <input type="text" id="search-phone-input" placeholder="Buscar o agregar terminal..." onkeyup="if(event.key==='Enter') buscarYAgregarContacto()" style="width:100%; padding:8px 12px; border-radius:8px; border:none; background:#202c33; color:white; outline:none; font-size:16px;">
         </div>
 
         <!-- LISTA DE CONTACTOS -->
@@ -638,6 +679,7 @@
         <div id="active-chat-view">
             <div class="chat-header">
                 <div class="chat-header-info">
+                    <i class="fas fa-arrow-left back-mobile-btn" onclick="cerrarChatMobile()"></i>
                     <img id="current-chat-avatar" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
                     <div>
                         <div id="current-chat-name" style="font-weight:bold;">---</div>
@@ -663,7 +705,7 @@
                 <i class="fas fa-times icon-btn" onclick="cancelarCitaMensaje()"></i>
             </div>
 
-            <input type="text" id="inner-search-chat" placeholder="Filtrar mensajes en esta sala..." onkeyup="forzarRenderMensajes()" style="display:none; padding:8px 16px; background:#182229; border:none; border-bottom:1px solid var(--border-color); color:white; outline:none;">
+            <input type="text" id="inner-search-chat" placeholder="Filtrar mensajes en esta sala..." onkeyup="forzarRenderMensajes()" style="display:none; padding:8px 16px; background:#182229; border:none; border-bottom:1px solid var(--border-color); color:white; outline:none; font-size:16px;">
 
             <!-- MENSAJES -->
             <div id="messages-space"></div>
@@ -728,12 +770,12 @@
         <div>
             <label style="font-size:0.8em; color:var(--text-muted)">Moniker / Nombre:</label>
             <span id="my-name" style="display:block; font-weight:bold; font-size:1.1em; margin-top:2px;">-</span>
-            <input type="text" id="settings-edit-name" style="width:100%; padding:8px; margin-top:4px; background:#202c33; border:1px solid var(--border-color); color:white; border-radius:4px;">
+            <input type="text" id="settings-edit-name" style="width:100%; padding:8px; margin-top:4px; background:#202c33; border:1px solid var(--border-color); color:white; border-radius:4px; font-size:16px;">
         </div>
 
         <div>
             <label style="font-size:0.8em; color:var(--text-muted)">Subtítulo / Estado Tag:</label>
-            <input type="text" id="settings-edit-tag" style="width:100%; padding:8px; margin-top:4px; background:#202c33; border:1px solid var(--border-color); color:white; border-radius:4px;">
+            <input type="text" id="settings-edit-tag" style="width:100%; padding:8px; margin-top:4px; background:#202c33; border:1px solid var(--border-color); color:white; border-radius:4px; font-size:16px;">
         </div>
 
         <div>
@@ -805,7 +847,7 @@
 <!-- REPRODUCTOR MÚSICA SINCRONIZADA -->
 <audio id="global-sync-player" style="display:none;"></audio>
 
-<!-- LÓGICA PRINCIPAL JAVASCRIPT -->
+<!-- LÓGICA PRINCIPAL JAVASCRIPT COMPLETA -->
 <script>
     const FIREBASE_BASE_URL = "https://nene-banko-default-rtdb.firebaseio.com";
     const BLANK_PIXEL = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
@@ -837,7 +879,6 @@
     let fragmentosAudio = [];
     let contadorMensajesPrevio = {};
 
-    // Carga de Sesión
     window.onload = () => {
         let savedSession = localStorage.getItem('verso_chat_session');
         if (savedSession) {
@@ -965,7 +1006,7 @@
             body: JSON.stringify(nuevoPerfil)
         });
 
-        alert(`✅ ¡Registro exitoso!\nTu ID de Terminal es: ${phone}\nTambién puedes entrar usando tu nombre "${name}".`);
+        alert(`✅ Registrado correctamente.\nTu ID es: ${phone}`);
 
         miPerfil = nuevoPerfil;
         localStorage.setItem('verso_chat_session', JSON.stringify(miPerfil));
@@ -1075,9 +1116,9 @@
                 aplicarClaseNombreEspecial(elSidebarName, miPerfil.nombre, miPerfil.rango);
             }
 
-            alert("✅ Perfil actualizado correctamente.");
+            alert("✅ Perfil actualizado.");
         } catch(err) {
-            alert("Error al actualizar la información en Firebase.");
+            alert("Error al guardar en Firebase.");
         }
     }
 
@@ -1159,9 +1200,7 @@
         guardarListaChatsEnCache();
 
         if (numeroChatActivo === numId) {
-            numeroChatActivo = "";
-            document.getElementById("active-chat-view").style.display = "none";
-            document.getElementById("welcome-view").style.display = "flex";
+            cerrarChatMobile();
         }
 
         delete contactosAgregados[numId];
@@ -1293,7 +1332,7 @@
                 grabadorMedios.start();
                 if (micIcon) micIcon.classList.add("recording-active");
             } catch (err) {
-                alert("Micrófono bloqueado o inaccesible.");
+                alert("Micrófono no disponible.");
             }
         } else {
             grabadorMedios.stop();
@@ -1352,13 +1391,11 @@
         let user = await res.json();
 
         if (user || query === miPerfil.numero || query.endsWith("_notes")) {
-            // 1. Guardarlo localmente en la propia terminal
             if (!listadoIdsChatsAbiertos.includes(query)) {
                 listadoIdsChatsAbiertos.push(query);
                 guardarListaChatsEnCache();
             }
 
-            // 2. BIDIRECCIONAL: Registrar la vinculación en Firebase para ambos usuarios
             if (!query.endsWith("_notes") && query !== miPerfil.numero) {
                 await fetch(`${FIREBASE_BASE_URL}/contactos_vinculados/${miPerfil.numero}/${query}.json`, {
                     method: 'PUT',
@@ -1372,9 +1409,10 @@
 
             let salaId = query.endsWith("_notes") ? query : [miPerfil.numero, query].sort().join('_');
             conectarSalaFirebase(salaId, "Enlace Asegurado.");
+            abrirChat(query);
             input.value = "";
         } else {
-            alert("ID de terminal inválido.");
+            alert("ID de terminal no encontrado.");
         }
     }
 
@@ -1384,7 +1422,7 @@
             listadoIdsChatsAbiertos.push(cod);
             guardarListaChatsEnCache();
         }
-        conectarSalaFirebase(cod, `Consola de canal privado inicializada por ${miPerfil.nombre}.`);
+        conectarSalaFirebase(cod, `Canal privado inicializado por ${miPerfil.nombre}.`);
         abrirChat(cod);
     }
 
@@ -1411,6 +1449,9 @@
         document.getElementById("welcome-view").style.display = "none";
         document.getElementById("active-chat-view").style.display = "flex";
 
+        // Modo Vista Móvil Activo
+        document.getElementById("chat-area").classList.add("mobile-active");
+
         let eg = document.getElementById("edit-group-icon");
         let ig = document.getElementById("invite-group-icon");
 
@@ -1429,6 +1470,13 @@
         aplicarClaseNombreEspecial(hn, hn.innerText, c ? c.rango : "estándar");
         document.getElementById("current-chat-avatar").src = c ? c.avatar : BLANK_PIXEL;
         forzarRenderMensajes();
+    }
+
+    function cerrarChatMobile() {
+        document.getElementById("chat-area").classList.remove("mobile-active");
+        numeroChatActivo = "";
+        document.getElementById("active-chat-view").style.display = "none";
+        document.getElementById("welcome-view").style.display = "flex";
     }
 
     function forzarRenderMensajes() {
@@ -1489,7 +1537,7 @@
             if (m.tipo === "imagen") cuerpo = `<img src="${m.contenido}" class="chat-inline-img" onclick="dispararModoCineEnfoque('${m.contenido}')">`;
             if (m.tipo === "audio") {
                 let audId = "audio-track-" + m.idFirebase;
-                cuerpo = `<audio id="${audId}" src="${m.contenido}" controls preload="auto" style="max-width:240px; height:40px; display:block; margin-top:4px;"></audio><button class="speed-badge-btn" onclick="alternarVelocidadAudio(this, '${audId}')">1x</button>`;
+                cuerpo = `<audio id="${audId}" src="${m.contenido}" controls preload="auto" style="max-width:220px; height:40px; display:block; margin-top:4px;"></audio><button class="speed-badge-btn" onclick="alternarVelocidadAudio(this, '${audId}')">1x</button>`;
             }
             if (m.tipo === "encuesta") {
                 let dataEnc = m.metaEncuesta;
@@ -1521,11 +1569,6 @@
 
             contenedor.innerHTML += `
                 <div class="message ${clase}">
-                    <div class="reactions-bar" style="display:none;">
-                        <span class="react-opt" onclick="reaccionarMensaje('${salaId}','${m.idFirebase}','❤️')">❤️</span>
-                        <span class="react-opt" onclick="reaccionarMensaje('${salaId}','${m.idFirebase}','👍')">👍</span>
-                        <span class="react-opt" onclick="reaccionarMensaje('${salaId}','${m.idFirebase}','🔥')">🔥</span>
-                    </div>
                     <div class="message-actions">
                         <i class="fas fa-star action-sub-btn ${isStarredClass}" onclick="toggleDestacarMensaje('${salaId}','${m.idFirebase}',${!m.destacado})"></i>
                         <i class="fas fa-reply action-sub-btn" onclick="activarCitaMensaje('${m.idFirebase}','${m.tipo==='texto'?m.contenido:'Archivo'}')"></i>
@@ -1541,13 +1584,6 @@
             `;
         });
         contenedor.scrollTop = contenedor.scrollHeight;
-    }
-
-    async function reaccionarMensaje(sala, msgKey, emoji) {
-        await fetch(`${FIREBASE_BASE_URL}/chats/${sala}/${msgKey}/reaccion.json`, {
-            method: 'PUT',
-            body: JSON.stringify(emoji)
-        });
     }
 
     async function toggleDestacarMensaje(sala, msgKey, estado) {
@@ -1567,7 +1603,7 @@
 
     async function solicitarBorradoMensaje(sala, msgKey, esMiMsg) {
         if (esMiMsg) {
-            if (confirm("¿Borrar mensaje para todos en la red?")) {
+            if (confirm("¿Borrar mensaje?")) {
                 await fetch(`${FIREBASE_BASE_URL}/chats/${sala}/${msgKey}.json`, { method: 'DELETE' });
             }
         } else {
@@ -1590,7 +1626,7 @@
                 }
             });
         }
-        if (total === 0) space.innerHTML = `<span style="color:var(--text-muted)">Aún no hay favoritos</span>`;
+        if (total === 0) space.innerHTML = `<span style="color:var(--text-muted)">Sin favoritos</span>`;
     }
 
     function ejecutarAuditoriaMetricasCanal() {
@@ -1648,7 +1684,6 @@
         });
     }
 
-    // Polling Global en Tiempo Real
     function iniciarRastreadorChatsGlobal() {
         setInterval(async () => {
             try {
@@ -1670,7 +1705,6 @@
                 const responseBroadcast = await fetch(`${FIREBASE_BASE_URL}/comandos_globales/broadcast_msg.json`);
                 let broadMsg = await responseBroadcast.json();
 
-                // Rastreo dinámico de nuevos contactos bidireccionales asignados a mí en Firebase
                 const responseVincs = await fetch(`${FIREBASE_BASE_URL}/contactos_vinculados/${miPerfil.numero}.json`);
                 let vincsRemote = await responseVincs.json() || {};
                 let nuevoCambioContacto = false;
@@ -1681,13 +1715,11 @@
                         nuevoCambioContacto = true;
                     }
                 }
-                if (nuevoCambioContacto) {
-                    guardarListaChatsEnCache();
-                }
+                if (nuevoCambioContacto) guardarListaChatsEnCache();
 
                 if (broadMsg && broadMsg.texto && broadMsg.idUnico !== localStorage.getItem('last_handled_broadcast')) {
                     localStorage.setItem('last_handled_broadcast', broadMsg.idUnico);
-                    document.getElementById("broadcast-layer-text").innerText = `⚡ [ADMINISTRACIÓN CENTRAL]:\n\n"${broadMsg.texto}"\n\n- Por: ${broadMsg.emisor}`;
+                    document.getElementById("broadcast-layer-text").innerText = `⚡ [ADMINISTRACIÓN]:\n\n"${broadMsg.texto}"\n\n- Por: ${broadMsg.emisor}`;
                     document.getElementById("broadcast-layer").style.display = "flex";
                 }
 
@@ -1721,12 +1753,11 @@
                         }
                     });
 
-                    // DISPARO DE NOTIFICACIONES PUSH AL DETECTAR MENSAJE NUEVO DE OTRA PERSONA
                     let prevCount = contadorMensajesPrevio[idKey] || 0;
                     if (mensajesSala.length > prevCount && prevCount !== 0) {
                         let ultM = mensajesSala[mensajesSala.length - 1];
                         if (ultM && ultM.emisor !== miPerfil.numero && ultM.tipo !== "sistema") {
-                            let txtNotif = ultM.tipo === "texto" ? ultM.contenido : (ultM.tipo === "imagen" ? "📷 Envió una imagen" : "🎵 Envió un audio/archivo");
+                            let txtNotif = ultM.tipo === "texto" ? ultM.contenido : "📷/🎵 Envió un archivo";
                             dispararNotificacionSistema(`Mensaje de ${ultM.nombreEmisor || 'Contacto'}`, txtNotif, ultM.avatarEmisor);
                         }
                     }
@@ -1752,7 +1783,7 @@
                     contadorLeidosLocal[numeroChatActivo] = contactosAgregados[numeroChatActivo]?.mensajes?.length || 0;
                     let statLabel = document.getElementById("current-chat-status");
                     if (statLabel) {
-                        if (numeroChatActivo.endsWith("_notes")) statLabel.innerText = "🔒 Nube Personal de Respaldo";
+                        if (numeroChatActivo.endsWith("_notes")) statLabel.innerText = "🔒 Respaldo Personal";
                         else if (numeroChatActivo.startsWith("GRUPO")) statLabel.innerText = "Canal Privado Activo";
                         else if (contactosAgregados[numeroChatActivo]) {
                             let tagInfo = contactosAgregados[numeroChatActivo].subtitulo ? ` [${contactosAgregados[numeroChatActivo].subtitulo}]` : "";
@@ -1783,15 +1814,15 @@
                 if (uM.tipo === 'sticker') ultimoTexto = '🖼️ Sticker';
                 else if (uM.tipo === 'imagen') ultimoTexto = '📷 Foto';
                 else if (uM.tipo === 'audio') ultimoTexto = '🎵 Nota de voz';
-                else if (uM.tipo === 'encuesta') ultimoTexto = '📊 Encuesta Activa';
-                else if (uM.tipo === 'juro') ultimoTexto = '🤝 Compromiso Declarado';
+                else if (uM.tipo === 'encuesta') ultimoTexto = '📊 Encuesta';
+                else if (uM.tipo === 'juro') ultimoTexto = '🤝 Compromiso';
                 else ultimoTexto = uM.contenido || '';
             }
 
-            if (c.escribiendo) ultimoTexto = `<span class="typing-text" style="color:var(--accent);">Escribiendo...</span>`;
+            if (c.escribiendo) ultimoTexto = `<span style="color:var(--accent);">Escribiendo...</span>`;
 
             let noLeidos = listado.length - (contadorLeidosLocal[num] || 0);
-            let unreadDOM = (noLeidos > 0 && num !== numeroChatActivo) ? `<div class="unread-badge" style="background:var(--accent); color:white; border-radius:50%; padding:2px 7px; font-size:0.75em;">${noLeidos}</div>` : "";
+            let unreadDOM = (noLeidos > 0 && num !== numeroChatActivo) ? `<div style="background:var(--accent); color:white; border-radius:50%; padding:2px 7px; font-size:0.75em;">${noLeidos}</div>` : "";
             let claseActiva = num === numeroChatActivo ? "active" : "";
             let claseNombreColor = "";
             let nUpper = (c.nombre || "").toUpperCase();
@@ -1887,13 +1918,12 @@
         }
     }
 
-    // Envío de Mensajes y Evaluación CLI
     async function enviarMensajeFirebase(contenido, tipo) {
         if (!numeroChatActivo) return;
         let salaId = numeroChatActivo.endsWith("_notes") ? numeroChatActivo : (numeroChatActivo.startsWith("GRUPO") ? numeroChatActivo : [miPerfil.numero, numeroChatActivo].sort().join('_'));
 
         if (canalSilenciadoMuteAll && tipo === "texto" && !contenido.startsWith("/muteall")) {
-            alert("⚠️ El canal se encuentra silenciado por la administración.");
+            alert("⚠️ El canal se encuentra silenciado.");
             return;
         }
 
@@ -1903,9 +1933,7 @@
                 listadoIdsChatsAbiertos = listadoIdsChatsAbiertos.filter(id => id !== numeroChatActivo);
                 guardarListaChatsEnCache();
                 delete contactosAgregados[numeroChatActivo];
-                numeroChatActivo = "";
-                document.getElementById("active-chat-view").style.display = "none";
-                document.getElementById("welcome-view").style.display = "flex";
+                cerrarChatMobile();
                 return;
             } else {
                 return;
@@ -1921,9 +1949,7 @@
                 listadoIdsChatsAbiertos = [miPerfil.numero];
                 guardarListaChatsEnCache();
                 contactosAgregados = {};
-                numeroChatActivo = "";
-                document.getElementById("active-chat-view").style.display = "none";
-                document.getElementById("welcome-view").style.display = "flex";
+                cerrarChatMobile();
                 return;
             } else {
                 return;
@@ -1974,13 +2000,13 @@
         if (tipo === "texto" && contenido.startsWith("/kick ")) {
             let expulsado = contenido.replace("/kick ", "").trim();
             tipo = "sistema";
-            contenido = `🚪 [SECURITY PROTOCOL]: El terminal '${expulsado}' ha sido expulsado por la administración.`;
+            contenido = `🚪 El terminal '${expulsado}' ha sido expulsado.`;
         }
 
         if (tipo === "texto" && contenido.trim() === "/muteall") {
             canalSilenciadoMuteAll = !canalSilenciadoMuteAll;
             tipo = "sistema";
-            contenido = canalSilenciadoMuteAll ? "🤫 [CONSOLE LOG]: Canal silenciado por administración central." : "🗣️ [CONSOLE LOG]: Canal restaurado. Transmisión habilitada.";
+            contenido = canalSilenciadoMuteAll ? "🤫 Canal silenciado por la administración." : "🗣️ Canal restaurado.";
         }
 
         if (tipo === "texto" && contenido.trim() === "/backup") {
@@ -1988,10 +2014,10 @@
             let blobJson = new Blob([JSON.stringify(chatDataRaw, null, 2)], { type: "application/json" });
             let dummyLink = document.createElement("a");
             dummyLink.href = URL.createObjectURL(blobJson);
-            dummyLink.download = `backup_verso_${numeroChatActivo}_2026.json`;
+            dummyLink.download = `backup_verso_${numeroChatActivo}.json`;
             dummyLink.click();
             tipo = "sistema";
-            contenido = `📦 [BACKUP SUCCESS]: Base de datos compilada de forma segura.`;
+            contenido = `📦 Backup generado correctamente.`;
         }
 
         if (tipo === "texto" && contenido.startsWith("/") && tipo !== "sistema" && tipo !== "encuesta" && tipo !== "juro") {
@@ -2001,7 +2027,7 @@
 
             if (comando === "/musica" && argument) {
                 await fetch(`${FIREBASE_BASE_URL}/comandos_globales/musica_sinc.json`, { method: 'PUT', body: JSON.stringify({ url: argument.trim() }) });
-                contenido = `🎵 Transmisión musical sincronizada inicializada.`;
+                contenido = `🎵 Transmisión musical inicializada.`;
             } else if (comando === "/fijar" && argument) {
                 await fetch(`${FIREBASE_BASE_URL}/anuncios_fijados/${salaId}.json`, { method: 'PUT', body: JSON.stringify(argument.trim()) });
                 contenido = `📌 Fijó un anuncio importante en la cabecera.`;
